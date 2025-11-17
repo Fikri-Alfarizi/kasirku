@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Sistem Manajemen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --dark-gradient: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f5f7;
+            color: #525f7f;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--primary-gradient);
+            z-index: 1000;
+            transition: all 0.3s;
+            overflow-y: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            color: white;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu .menu-item {
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .sidebar-menu .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .sidebar-menu .menu-item.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .sidebar-menu .menu-item i {
+            margin-right: 10px;
+        }
+
+        .sidebar-menu .submenu {
+            display: none;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu .submenu.show {
+            display: block;
+        }
+
+        .sidebar-menu .submenu .menu-item {
+            padding-left: 50px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .top-navbar {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-bar i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon, .user-menu {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .notification-icon i, .user-menu i {
+            font-size: 24px;
+            color: #525f7f;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-icon i:hover, .user-menu i:hover {
+            color: #667eea;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f44336;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card .icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .stat-card .icon.primary {
+            background: var(--primary-gradient);
+        }
+
+        .stat-card .icon.success {
+            background: var(--success-gradient);
+        }
+
+        .stat-card .icon.info {
+            background: var(--info-gradient);
+        }
+
+        .stat-card .icon.warning {
+            background: var(--warning-gradient);
+        }
+
+        .stat-card .icon.dark {
+            background: var(--dark-gradient);
+        }
+
+        .stat-card h6 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8492a6;
+            margin-bottom: 5px;
+        }
+
+        .stat-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #32325d;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .stat-card .change {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stat-card .change.positive {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .stat-card .change.negative {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+
+        .chart-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .chart-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-card .card-header h5 {
+            margin: 0;
+            font-weight: 500;
+            color: #32325d;
+        }
+
+        .chart-card .card-header .dropdown {
+            position: relative;
+        }
+
+        .chart-card .card-header .dropdown button {
+            background: none;
+            border: none;
+            color: #8492a6;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .chart-card .card-header .dropdown .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+
+        .chart-card .card-header .dropdown .dropdown-menu.show {
+            display: block;
+        }
+
+        .chart-card .card-header .dropdown .dropdown-menu a {
+            display: block;
+            padding: 8px 15px;
+            color: #525f7f;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .chart-card .card-header .dropdown .dropdown-menu a:hover {
+            background-color: #f4f5f7;
+        }
+
+        .data-table {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .data-table .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .data-table .table-header h5 {
+            margin: 0;
+            font-weight: 500;
+            color: #32325d;
+        }
+
+        .data-table .table-header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .data-table .table-header .actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .data-table .table-header .actions .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .data-table .table-header .actions .btn-primary:hover {
+            background-color: #5a6fd8;
+        }
+
+        .data-table .table-header .actions .btn-secondary {
+            background-color: #f4f5f7;
+            color: #525f7f;
+        }
+
+        .data-table .table-header .actions .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table table th {
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 500;
+            color: #8492a6;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table table .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .data-table table .status.success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .data-table table .status.pending {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        .data-table table .status.failed {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+
+        .data-table table .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .data-table table .actions button {
+            background: none;
+            border: none;
+            color: #8492a6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .data-table table .actions button:hover {
+            color: #667eea;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h5 {
+            margin: 0;
+            font-weight: 500;
+            color: #32325d;
+        }
+
+        .modal-header .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #8492a6;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-footer .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .modal-footer .btn-primary:hover {
+            background-color: #5a6fd8;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #f4f5f7;
+            color: #525f7f;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #525f7f;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transform: translateX(120%);
+            transition: transform 0.3s;
+            z-index: 3000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .toast.info {
+            border-left: 4px solid #2196f3;
+        }
+
+        .toast i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: #4caf50;
+        }
+
+        .toast.error i {
+            color: #f44336;
+        }
+
+        .toast.info i {
+            color: #2196f3;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #e9ecef;
+            background-color: white;
+            color: #525f7f;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #f4f5f7;
+        }
+
+        .pagination button.active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .search-bar {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar-right {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="material-icons">menu</i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Panel</h3>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active" data-page="dashboard">
+                <i class="material-icons">dashboard</i>
+                <span>Dashboard</span>
+            </a>
+            <div class="menu-item" id="produkMenu">
+                <i class="material-icons">inventory_2</i>
+                <span>Produk</span>
+                <i class="material-icons ms-auto">expand_more</i>
+            </div>
+            <div class="submenu" id="produkSubmenu">
+                <a href="#" class="menu-item" data-page="produk-list">Daftar Produk</a>
+                <a href="#" class="menu-item" data-page="kategori">Kategori</a>
+                <a href="#" class="menu-item" data-page="stok">Manajemen Stok</a>
+            </div>
+            <div class="menu-item" id="transaksiMenu">
+                <i class="material-icons">shopping_cart</i>
+                <span>Transaksi</span>
+                <i class="material-icons ms-auto">expand_more</i>
+            </div>
+            <div class="submenu" id="transaksiSubmenu">
+                <a href="#" class="menu-item" data-page="penjualan">Penjualan</a>
+                <a href="#" class="menu-item" data-page="pembelian">Pembelian</a>
+                <a href="#" class="menu-item" data-page="retur">Retur</a>
+            </div>
+            <a href="#" class="menu-item" data-page="pelanggan">
+                <i class="material-icons">people</i>
+                <span>Pelanggan</span>
+            </a>
+            <a href="#" class="menu-item" data-page="supplier">
+                <i class="material-icons">local_shipping</i>
+                <span>Supplier</span>
+            </a>
+            <div class="menu-item" id="laporanMenu">
+                <i class="material-icons">assessment</i>
+                <span>Laporan</span>
+                <i class="material-icons ms-auto">expand_more</i>
+            </div>
+            <div class="submenu" id="laporanSubmenu">
+                <a href="#" class="menu-item" data-page="laporan-penjualan">Laporan Penjualan</a>
+                <a href="#" class="menu-item" data-page="laporan-stok">Laporan Stok</a>
+                <a href="#" class="menu-item" data-page="laporan-keuangan">Laporan Keuangan</a>
+            </div>
+            <a href="#" class="menu-item" data-page="pengaturan">
+                <i class="material-icons">settings</i>
+                <span>Pengaturan</span>
+            </a>
+            <a href="#" class="menu-item" data-page="logout">
+                <i class="material-icons">logout</i>
+                <span>Keluar</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="search-bar">
+                <input type="text" placeholder="Cari...">
+                <i class="material-icons">search</i>
+            </div>
+            <div class="navbar-right">
+                <div class="notification-icon">
+                    <i class="material-icons">notifications</i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-menu">
+                    <i class="material-icons">account_circle</i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="page-content">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon primary">
+                            <i class="material-icons">attach_money</i>
+                        </div>
+                        <h6>Total Penjualan Hari Ini</h6>
+                        <h3>Rp 2.450.000</h3>
+                        <p><span class="change positive">+55%</span> dari minggu lalu</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon success">
+                            <i class="material-icons">shopping_cart</i>
+                        </div>
+                        <h6>Transaksi Hari Ini</h6>
+                        <h3>24</h3>
+                        <p><span class="change positive">+3%</span> dari bulan lalu</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon info">
+                            <i class="material-icons">people</i>
+                        </div>
+                        <h6>Total Pelanggan</h6>
+                        <h3>1.425</h3>
+                        <p><span class="change negative">-2%</span> dari kemarin</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon warning">
+                            <i class="material-icons">inventory_2</i>
+                        </div>
+                        <h6>Total Produk</h6>
+                        <h3>348</h3>
+                        <p><span class="change positive">+5%</span> dari kemarin</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Penjualan Mingguan</h5>
+                            <div class="dropdown">
+                                <button id="weeklySalesDropdown">
+                                    <i class="material-icons">more_vert</i>
+                                </button>
+                                <div class="dropdown-menu" id="weeklySalesMenu">
+                                    <a href="#">Hari Ini</a>
+                                    <a href="#">Minggu Ini</a>
+                                    <a href="#">Bulan Ini</a>
+                                    <a href="#">Tahun Ini</a>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="weeklySalesChart" height="170"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Penjualan Harian</h5>
+                            <div class="dropdown">
+                                <button id="dailySalesDropdown">
+                                    <i class="material-icons">more_vert</i>
+                                </button>
+                                <div class="dropdown-menu" id="dailySalesMenu">
+                                    <a href="#">Hari Ini</a>
+                                    <a href="#">Minggu Ini</a>
+                                    <a href="#">Bulan Ini</a>
+                                    <a href="#">Tahun Ini</a>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="dailySalesChart" height="170"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Tugas Selesai</h5>
+                            <div class="dropdown">
+                                <button id="tasksDropdown">
+                                    <i class="material-icons">more_vert</i>
+                                </button>
+                                <div class="dropdown-menu" id="tasksMenu">
+                                    <a href="#">Hari Ini</a>
+                                    <a href="#">Minggu Ini</a>
+                                    <a href="#">Bulan Ini</a>
+                                    <a href="#">Tahun Ini</a>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="tasksChart" height="170"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h5>Transaksi Terbaru</h5>
+                            <div class="actions">
+                                <button class="btn-secondary">Filter</button>
+                                <button class="btn-primary">Export</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tanggal</th>
+                                    <th>Pelanggan</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#TRX001</td>
+                                    <td>01/06/2023</td>
+                                    <td>Ahmad Rizki</td>
+                                    <td>Rp 250.000</td>
+                                    <td><span class="status success">Selesai</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button><i class="material-icons">visibility</i></button>
+                                            <button><i class="material-icons">edit</i></button>
+                                            <button><i class="material-icons">delete</i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX002</td>
+                                    <td>01/06/2023</td>
+                                    <td>Siti Nurhaliza</td>
+                                    <td>Rp 450.000</td>
+                                    <td><span class="status pending">Diproses</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button><i class="material-icons">visibility</i></button>
+                                            <button><i class="material-icons">edit</i></button>
+                                            <button><i class="material-icons">delete</i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX003</td>
+                                    <td>31/05/2023</td>
+                                    <td>Budi Santoso</td>
+                                    <td>Rp 320.000</td>
+                                    <td><span class="status success">Selesai</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button><i class="material-icons">visibility</i></button>
+                                            <button><i class="material-icons">edit</i></button>
+                                            <button><i class="material-icons">delete</i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX004</td>
+                                    <td>31/05/2023</td>
+                                    <td>Dewi Lestari</td>
+                                    <td>Rp 180.000</td>
+                                    <td><span class="status failed">Dibatalkan</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button><i class="material-icons">visibility</i></button>
+                                            <button><i class="material-icons">edit</i></button>
+                                            <button><i class="material-icons">delete</i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <button disabled><i class="material-icons">chevron_left</i></button>
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                            <button><i class="material-icons">chevron_right</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produk List Page -->
+        <div id="produk-listPage" class="page-content" style="display: none;">
+            <div class="data-table">
+                <div class="table-header">
+                    <h5>Daftar Produk</h5>
+                    <div class="actions">
+                        <button class="btn-secondary" id="filterProdukBtn">Filter</button>
+                        <button class="btn-primary" id="tambahProdukBtn">+ Tambah Produk</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Gambar</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img src="https://picsum.photos/seed/product1/60/60.jpg" width="60" class="rounded"></td>
+                            <td>Laptop ASUS ROG</td>
+                            <td>Elektronik</td>
+                            <td>Rp 15.000.000</td>
+                            <td>12</td>
+                            <td><span class="status success">Tersedia</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button><i class="material-icons">visibility</i></button>
+                                    <button><i class="material-icons">edit</i></button>
+                                    <button><i class="material-icons">delete</i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://picsum.photos/seed/product2/60/60.jpg" width="60" class="rounded"></td>
+                            <td>Mouse Gaming Logitech</td>
+                            <td>Aksesoris</td>
+                            <td>Rp 450.000</td>
+                            <td>25</td>
+                            <td><span class="status success">Tersedia</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button><i class="material-icons">visibility</i></button>
+                                    <button><i class="material-icons">edit</i></button>
+                                    <button><i class="material-icons">delete</i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://picsum.photos/seed/product3/60/60.jpg" width="60" class="rounded"></td>
+                            <td>Keyboard Mechanical</td>
+                            <td>Aksesoris</td>
+                            <td>Rp 850.000</td>
+                            <td>5</td>
+                            <td><span class="status pending">Terbatas</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button><i class="material-icons">visibility</i></button>
+                                    <button><i class="material-icons">edit</i></button>
+                                    <button><i class="material-icons">delete</i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="https://picsum.photos/seed/product4/60/60.jpg" width="60" class="rounded"></td>
+                            <td>Monitor LG 27 inch</td>
+                            <td>Elektronik</td>
+                            <td>Rp 3.500.000</td>
+                            <td>0</td>
+                            <td><span class="status failed">Habis</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button><i class="material-icons">visibility</i></button>
+                                    <button><i class="material-icons">edit</i></button>
+                                    <button><i class="material-icons">delete</i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button disabled><i class="material-icons">chevron_left</i></button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button><i class="material-icons">chevron_right</i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other pages will be added here -->
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Tambah Produk</h5>
+                <button class="close" id="closeAddProductModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="productName">Nama Produk</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Kategori</label>
+                        <select id="productCategory" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="elektronik">Elektronik</option>
+                            <option value="aksesoris">Aksesoris</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="makanan">Makanan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Harga</label>
+                        <input type="number" id="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stok</label>
+                        <input type="number" id="productStock" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Deskripsi</label>
+                        <textarea id="productDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Gambar</label>
+                        <input type="file" id="productImage">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddProduct">Batal</button>
+                <button class="btn-primary" id="saveProduct">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="material-icons"></i>
+        <span></span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize variables
+        let currentPage = 'dashboard';
+        let weeklySalesChart, dailySalesChart, tasksChart;
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const toast = document.getElementById('toast');
+        const addProductModal = document.getElementById('addProductModal');
+        const addProductForm = document.getElementById('addProductForm');
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize charts
+            initCharts();
+
+            // Setup event listeners
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+
+            // Sidebar menu items
+            const menuItems = document.querySelectorAll('.menu-item[data-page]');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    navigateToPage(page);
+                });
+            });
+
+            // Submenu toggles
+            const submenuToggles = document.querySelectorAll('.menu-item[id$="Menu"]');
+            submenuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const submenuId = this.id.replace('Menu', 'Submenu');
+                    const submenu = document.getElementById(submenuId);
+                    submenu.classList.toggle('show');
+                });
+            });
+
+            // Dropdown menus
+            const dropdownButtons = document.querySelectorAll('.dropdown button');
+            dropdownButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const menuId = this.id.replace('Dropdown', 'Menu');
+                    const menu = document.getElementById(menuId);
+
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-menu').forEach(m => {
+                        if (m.id !== menuId) {
+                            m.classList.remove('show');
+                        }
+                    });
+
+                    menu.classList.toggle('show');
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            });
+
+            // Add product button
+            const tambahProdukBtn = document.getElementById('tambahProdukBtn');
+            if (tambahProdukBtn) {
+                tambahProdukBtn.addEventListener('click', function() {
+                    addProductModal.classList.add('show');
+                });
+            }
+
+            // Close modal buttons
+            const closeAddProductModal = document.getElementById('closeAddProductModal');
+            const cancelAddProduct = document.getElementById('cancelAddProduct');
+
+            if (closeAddProductModal) {
+                closeAddProductModal.addEventListener('click', function() {
+                    addProductModal.classList.remove('show');
+                });
+            }
+
+            if (cancelAddProduct) {
+                cancelAddProduct.addEventListener('click', function() {
+                    addProductModal.classList.remove('show');
+                });
+            }
+
+            // Save product button
+            const saveProduct = document.getElementById('saveProduct');
+            if (saveProduct) {
+                saveProduct.addEventListener('click', function() {
+                    if (addProductForm.checkValidity()) {
+                        // In a real app, this would save to a database
+                        showToast('Produk berhasil ditambahkan!', 'success');
+                        addProductModal.classList.remove('show');
+                        addProductForm.reset();
+                    } else {
+                        showToast('Mohon lengkapi semua field yang diperlukan', 'error');
+                    }
+                });
+            }
+
+            // Pagination buttons
+            const paginationButtons = document.querySelectorAll('.pagination button');
+            paginationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.disabled && !this.classList.contains('active')) {
+                        // Remove active class from all buttons
+                        document.querySelectorAll('.pagination button').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+
+                        // Add active class to clicked button
+                        this.classList.add('active');
+
+                        // In a real app, this would load the corresponding page
+                        showToast(`Halaman ${this.textContent} dimuat`, 'info');
+                    }
+                });
+            });
+        }
+
+        function navigateToPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => {
+                p.style.display = 'none';
+            });
+
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            const pageElement = document.getElementById(page + 'Page');
+            if (pageElement) {
+                pageElement.style.display = 'block';
+            } else {
+                // If page doesn't exist, show dashboard
+                document.getElementById('dashboardPage').style.display = 'block';
+                showToast(`Halaman ${page} belum tersedia`, 'info');
+            }
+
+            // Add active class to selected menu item
+            document.querySelector(`.menu-item[data-page="${page}"]`).classList.add('active');
+
+            // Update current page
+            currentPage = page;
+
+            // Close mobile menu if open
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
+        }
+
+        function initCharts() {
+            // Weekly Sales Chart
+            const weeklySalesCtx = document.getElementById('weeklySalesChart');
+            if (weeklySalesCtx) {
+                weeklySalesChart = new Chart(weeklySalesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                        datasets: [{
+                            label: 'Penjualan',
+                            tension: 0.4,
+                            borderWidth: 0,
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            backgroundColor: 'rgba(255, 255, 255, .8)',
+                            data: [50, 20, 10, 22, 50, 10, 40],
+                            maxBarThickness: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        scales: {
+                            y: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: true,
+                                    drawOnChartArea: true,
+                                    drawTicks: false,
+                                    borderDash: [5, 5],
+                                    color: 'rgba(255, 255, 255, .2)'
+                                },
+                                ticks: {
+                                    suggestedMin: 0,
+                                    suggestedMax: 500,
+                                    beginAtZero: true,
+                                    padding: 10,
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    },
+                                    color: '#fff'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: true,
+                                    drawOnChartArea: true,
+                                    drawTicks: false,
+                                    borderDash: [5, 5],
+                                    color: 'rgba(255, 255, 255, .2)'
+                                },
+                                ticks: {
+                                    display: true,
+                                    color: '#f8f9fa',
+                                    padding: 10,
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Daily Sales Chart
+            const dailySalesCtx = document.getElementById('dailySalesChart');
+            if (dailySalesCtx) {
+                dailySalesChart = new Chart(dailySalesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                        datasets: [{
+                            label: 'Penjualan',
+                            tension: 0,
+                            borderWidth: 0,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(255, 255, 255, .8)',
+                            pointBorderColor: 'transparent',
+                            borderColor: 'rgba(255, 255, 255, .8)',
+                            borderWidth: 4,
+                            backgroundColor: 'transparent',
+                            fill: true,
+                            data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
+                            maxBarThickness: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        scales: {
+                            y: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: true,
+                                    drawOnChartArea: true,
+                                    drawTicks: false,
+                                    borderDash: [5, 5],
+                                    color: 'rgba(255, 255, 255, .2)'
+                                },
+                                ticks: {
+                                    display: true,
+                                    color: '#f8f9fa',
+                                    padding: 10,
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: false,
+                                    drawOnChartArea: false,
+                                    drawTicks: false,
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    display: true,
+                                    color: '#f8f9fa',
+                                    padding: 10,
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Tasks Chart
+            const tasksCtx = document.getElementById('tasksChart');
+            if (tasksCtx) {
+                tasksChart = new Chart(tasksCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                        datasets: [{
+                            label: 'Tugas Selesai',
+                            tension: 0,
+                            borderWidth: 0,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(255, 255, 255, .8)',
+                            pointBorderColor: 'transparent',
+                            borderColor: 'rgba(255, 255, 255, .8)',
+                            borderWidth: 4,
+                            backgroundColor: 'transparent',
+                            fill: true,
+                            data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+                            maxBarThickness: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        scales: {
+                            y: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: true,
+                                    drawOnChartArea: true,
+                                    drawTicks: false,
+                                    borderDash: [5, 5],
+                                    color: 'rgba(255, 255, 255, .2)'
+                                },
+                                ticks: {
+                                    display: true,
+                                    padding: 10,
+                                    color: '#f8f9fa',
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    drawBorder: false,
+                                    display: false,
+                                    drawOnChartArea: false,
+                                    drawTicks: false,
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    display: true,
+                                    color: '#f8f9fa',
+                                    padding: 10,
+                                    font: {
+                                        size: 14,
+                                        weight: 300,
+                                        family: 'Roboto',
+                                        style: 'normal',
+                                        lineHeight: 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('toast');
+            const toastIcon = toastElement.querySelector('i');
+            const toastMessage = toastElement.querySelector('span');
+
+            // Set toast type
+            toastElement.className = 'toast ' + type;
+
+            // Set icon based on type
+            switch(type) {
+                case 'success':
+                    toastIcon.textContent = 'check_circle';
+                    break;
+                case 'error':
+                    toastIcon.textContent = 'error';
+                    break;
+                case 'info':
+                default:
+                    toastIcon.textContent = 'info';
+                    break;
+            }
+
+            // Set message
+            toastMessage.textContent = message;
+
+            // Show toast
+            toastElement.classList.add('show');
+
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
